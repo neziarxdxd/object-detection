@@ -6,6 +6,9 @@ import argparse
 import imutils
 import time
 import cv2
+import pyttsx3
+
+engine = pyttsx3.init()
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -62,15 +65,20 @@ while True:
 		# filter out weak detections by ensuring the `confidence` is
 		# greater than the minimum confidence
 		if confidence > args["confidence"]:
+
 			# extract the index of the class label from the
 			# `detections`, then compute the (x, y)-coordinates of
 			# the bounding box for the object
 			idx = int(detections[0, 0, i, 1])
+			detectObject = CLASSES[idx]
+			engine.say(detectObject)
+			engine.runAndWait()
+			engine.stop()            
 			box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
 			(startX, startY, endX, endY) = box.astype("int")
 
 			# draw the prediction on the frame
-			label = "{}: {:.2f}%".format(CLASSES[idx],
+			label = "{}: {:.2f}%".format(detectObject,
 				confidence * 100)
 			cv2.rectangle(frame, (startX, startY), (endX, endY),
 				COLORS[idx], 2)
